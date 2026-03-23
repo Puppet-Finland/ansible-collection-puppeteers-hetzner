@@ -23,7 +23,7 @@
     group: root
     mode: '0644'
   notify: Restart NetworkManager
-  when: network_scripts.stat.isdir
+  when: network_scripts.stat.isdir is defined and network_scripts.stat.isdir
 
 # Recent Fedora (39+) and RHEL-derivatives (10+)
 - name: Activate floating IPs using NetworkManager system-connections
@@ -45,4 +45,4 @@
         option: address2
         value: "{{ puppeteers_hetzner_floating_ip_v6 }}"
       notify: Restart NetworkManager
-  when: system_connections.stat.isdir
+  when: system_connections.stat.isdir is defined and system_connections.stat.isdir
