@@ -9,8 +9,8 @@ This Ansible collection contains content specific to Hetzner Cloud.
 This role activates floating IPs for a host. It is assumed that both both IPv4
 and IPv6 IPs are available. Role variables:
 
-* **puppeteers_hetzner_floating_ipv4**: your IPv4 floating IP
-* **puppeteers_hetzner_floating_ipv6**: your IPv6 floating IP
+* **puppeteers_hetzner_floating_ip_v4**: your IPv4 floating IP
+* **puppeteers_hetzner_floating_ip_v6**: your IPv6 floating IP
 
 Currently on RHEL derivatives are supported.
 

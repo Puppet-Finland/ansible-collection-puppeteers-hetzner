@@ -1,8 +1,8 @@
 - name: Validate parameters
   ansible.builtin.assert:
     that:
-      - puppeteers_hetzner_floating_ipv4 is string
-      - puppeteers_hetzner_floating_ipv6 is string
+      - puppeteers_hetzner_floating_ip_v4 is string
+      - puppeteers_hetzner_floating_ip_v6 is string
 
 - name: Activate floating IP
   ansible.builtin.template:
