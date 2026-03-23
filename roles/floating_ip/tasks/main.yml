@@ -4,10 +4,45 @@
       - puppeteers_hetzner_floating_ip_v4 is string
       - puppeteers_hetzner_floating_ip_v6 is string
 
-- name: Activate floating IP
+- name: Check if /etc/sysconfig/network-scripts is present
+  ansible.builtin.stat:
+    path: /etc/sysconfig/network-scripts
+  register: network_scripts
+
+- name: Check if /etc/NetworkManager/system-connections is present
+  ansible.builtin.stat:
+    path: /etc/NetworkManager/system-connections
+  register: system_connections
+
+# Old Fedora (pre-38) and RHEL-derivatives (pre-10)
+- name: Activate floating IP with sysconfig network-scripts
   ansible.builtin.template:
     src: "ifcfg-eth0:1.j2"
     dest: "/etc/sysconfig/network-scripts/ifcfg-eth0:1"
     owner: root
     group: root
     mode: '0644'
+  notify: Restart NetworkManager
+  when: network_scripts.stat.isdir
+
+# Recent Fedora (39+) and RHEL-derivatives (10+)
+- name: Activate floating IPs using NetworkManager system-connections
+  block:
+    - name: Add IPv4 floating IP
+      community.general.ini_file:
+        state: present
+        path: /etc/NetworkManager/system-connections/cloud-init-eth0.nmconnection
+        section: ipv4
+        option: address2
+        value: {{ puppeteers_hetzner_floating_ip_v4 }}
+      notify: Restart NetworkManager
+
+    - name: Add IPv6 floating IP
+      community.general.ini_file:
+        state: present
+        path: /etc/NetworkManager/system-connections/cloud-init-eth0.nmconnection
+        section: ipv6
+        option: address2
+        value: {{ puppeteers_hetzner_floating_ip_v6 }}
+      notify: Restart NetworkManager
+  when: system_connections.stat.isdir
