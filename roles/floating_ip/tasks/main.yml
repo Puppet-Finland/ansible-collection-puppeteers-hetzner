@@ -1,0 +1,13 @@
+- name: Validate parameters
+  ansible.builtin.assert:
+    that:
+      - puppeteers_hetzner_floating_ipv4 is string
+      - puppeteers_hetzner_floating_ipv6 is string
+
+- name: Activate floating IP
+  ansible.builtin.template:
+    src: "ifcfg-eth0:1.j2"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-eth0:1"
+    owner: root
+    group: root
+    mode: '0644'
