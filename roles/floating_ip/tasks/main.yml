@@ -34,7 +34,7 @@
         path: /etc/NetworkManager/system-connections/cloud-init-eth0.nmconnection
         section: ipv4
         option: address2
-        value: {{ puppeteers_hetzner_floating_ip_v4 }}
+        value: "{{ puppeteers_hetzner_floating_ip_v4 }}"
       notify: Restart NetworkManager
 
     - name: Add IPv6 floating IP
@@ -43,6 +43,6 @@
         path: /etc/NetworkManager/system-connections/cloud-init-eth0.nmconnection
         section: ipv6
         option: address2
-        value: {{ puppeteers_hetzner_floating_ip_v6 }}
+        value: "{{ puppeteers_hetzner_floating_ip_v6 }}"
       notify: Restart NetworkManager
   when: system_connections.stat.isdir
