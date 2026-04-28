@@ -1,0 +1,15 @@
+---
+- name: Validate parameters
+  ansible.builtin.assert:
+    that:
+      - puppeteers_hetzner_firewalld_zone_mapping_interface is string
+      - puppeteers_hetzner_firewalld_zone_mapping_zone is string
+
+- name: Assign interface to a firewalld zone
+  ansible.posix.firewalld:
+    zone: "{{ puppeteers_hetzner_firewalld_zone_mapping_zone }}"
+    interface: "{{ puppeteers_hetzner_firewalld_zone_mapping_interface }}"
+    permanent: true
+    immediate: true
+    state: enabled
+

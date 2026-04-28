@@ -1,0 +1,4 @@
+---
+puppeteers_hetzner_firewalld_zone_mapping_interface: eth1
+puppeteers_hetzner_firewalld_zone_mapping_zone: internal
+

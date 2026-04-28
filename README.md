@@ -15,6 +15,15 @@ and IPv6 IPs are available. Role variables:
 Currently on RHEL derivatives are supported. This role has been tested on RHEL
 9 and 10 derivatives (Rocky Linux and Alma Linux)
 
+## puppeteers.hetzner.firewalld_zone_mapping
+
+This role bind an interface to a firewalld zone. This helps in Hetzner where
+networks attached to private networks do not get automatically assigned to any
+firewalld zone. The role takes two parameters:
+
+* **puppeteers_hetzner_firewalld_zone_mapping_zone**: the firewalld zone (default: *eth1*)
+* **puppeteers_hetzner_firewalld_zone_mapping_interface**: the interface (default: *internal*)
+
 # License
 
 This project is licensed under the BSD-2-Clause license. See
