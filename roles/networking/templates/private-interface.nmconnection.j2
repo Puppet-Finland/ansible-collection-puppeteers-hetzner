@@ -1,0 +1,26 @@
+[connection]
+id={{ puppeteers_hetzner_networking_private_connection_name }}
+type=ethernet
+autoconnect-priority=-999
+interface-name={{ puppeteers_hetzner_networking_private_connection_interface }}
+
+[ethernet]
+
+[ipv4]
+address1={{ puppeteers_hetzner_networking_private_connection_ipv4_address }}
+dns={{ puppeteers_hetzner_networking_private_connection_ipv4_dns }}
+dns-search={{ puppeteers_hetzner_networking_private_connection_ipv4_dns_search }}
+ignore-auto-dns=true
+ignore-auto-routes=true
+may-fail=false
+method=manual
+never-default=true
+{% for route in puppeteers_hetzner_networking_private_connection_ipv4_routes %}
+{{ route }}
+{% endfor %}
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+
+[proxy]

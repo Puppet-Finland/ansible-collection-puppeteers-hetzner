@@ -1,0 +1,69 @@
+---
+- name: Validate parameters
+  ansible.builtin.assert:
+    that:
+      - puppeteers_hetzner_networking_private_connection_name is string
+      - puppeteers_hetzner_networking_private_connection_interface is string
+      - puppeteers_hetzner_networking_private_connection_ipv4_address is string
+      - puppeteers_hetzner_networking_private_connection_ipv4_dns is string
+      - puppeteers_hetzner_networking_private_connection_ipv4_dns_search is string
+      - puppeteers_hetzner_networking_private_connection_ipv4_routes is not string and puppeteers_hetzner_networking_private_connection_ipv4_routes is not mapping and puppeteers_hetzner_networking_private_connection_ipv4_routes is iterable
+
+- name: Remove conflicting Hetzner network configurations utils
+  ansible.builtin.package:
+    name: hc-utils
+    state: absent
+
+- name: Configure NetworkManager system connection for the private interface
+  ansible.builtin.template:
+    src: private-interface.nmconnection.j2
+    dest: "/etc/NetworkManager/system-connections/{{ puppeteers_hetzner_networking_private_connection_name }}.nmconnection"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Ignore carrier on private interface
+  ansible.builtin.template:
+    src: 50-ignore-private-interface-carrier.conf.j2
+    dest: "/etc/NetworkManager/conf.d/50-ignore-{{ puppeteers_hetzner_networking_private_connection_interface }}-carrier.conf"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure that cloud-init only uses network-manager network renderer
+  ansible.builtin.template:
+    src: "96-force-networkmanager.cfg.j2"
+    dest: "/etc/cloud/cloud.cfg.d/96-force-networkmanager.cfg"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install systemd-resolved
+  ansible.builtin.package:
+    name: systemd-resolved
+    state: present
+
+- name: Enable and start systemd-resolved
+  ansible.builtin.service:
+    name: systemd-resolved
+    enabled: true
+    state: started
+
+- name: Check if systemd-resolved is a file
+  ansible.builtin.stat:
+    path: /etc/resolv.conf
+  register: resolv_conf_res
+
+- name: Remove /etc/resolv.conf if it is a file
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: absent
+  when: resolv_conf_res.stat.isreg
+
+- name: Let systemd-resolved resolve names
+  ansible.builtin.file:
+    src: /run/systemd/resolve/stub-resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+    owner: root
+    group: root

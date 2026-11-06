@@ -1,0 +1,3 @@
+puppeteers_hetzner_networking_private_connection_name: "Wired connection 1"
+puppeteers_hetzner_networking_private_connection_interface: eth1
+puppeteers_hetzner_networking_private_connection_ipv4_routes: []

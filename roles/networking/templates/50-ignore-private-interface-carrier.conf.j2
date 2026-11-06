@@ -1,0 +1,7 @@
+[device]
+match-device=interface-name:{{ puppeteers_hetzner_networking_private_connection_interface }}
+managed=1
+# Carrier never appears, so don't wait for it for 6000 seconds, which is the
+# default.
+carrier-wait-timeout=100
+ignore-carrier=yes
