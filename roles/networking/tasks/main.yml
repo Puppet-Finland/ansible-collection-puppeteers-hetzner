@@ -14,6 +14,30 @@
     name: hc-utils
     state: absent
 
+# Do this early to avoid temporary network-related problems while network configuration is not yet complete
+- name: Install systemd-resolved
+  ansible.builtin.package:
+    name: systemd-resolved
+    state: present
+
+- name: Check if a system connection file with the same name is already present
+  ansible.builtin.stat:
+    path: "/etc/NetworkManager/system-connections/{{ puppeteers_hetzner_networking_private_connection_name }}.nmconnection"
+  register: nmconnection
+
+- name: Check if an existing connection with the same name is configured
+  ansible.builtin.command:
+    cmd: "nmcli conn show \"{{ puppeteers_hetzner_networking_private_connection_name }}\""
+  register: nmcli_conn_show
+  ignore_errors: true
+
+- name: Remove existing connection if it is not a system connection
+  ansible.builtin.command:
+    cmd: "nmcli conn delete \"{{ puppeteers_hetzner_networking_private_connection_name }}\""
+  when:
+    - not nmconnection.stat.exists
+    - nmcli_conn_show.rc == 0
+
 - name: Configure NetworkManager system connection for the private interface
   ansible.builtin.template:
     src: private-interface.nmconnection.j2
@@ -39,11 +63,6 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Install systemd-resolved
-  ansible.builtin.package:
-    name: systemd-resolved
-    state: present
 
 - name: Enable and start systemd-resolved
   ansible.builtin.service:
