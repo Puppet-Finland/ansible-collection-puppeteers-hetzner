@@ -21,6 +21,7 @@
     owner: root
     group: root
     mode: '0600'
+  notify: Restart NetworkManager
 
 - name: Ignore carrier on private interface
   ansible.builtin.template:
@@ -29,6 +30,7 @@
     owner: root
     group: root
     mode: '0644'
+  notify: Restart NetworkManager
 
 - name: Ensure that cloud-init only uses network-manager network renderer
   ansible.builtin.template:
